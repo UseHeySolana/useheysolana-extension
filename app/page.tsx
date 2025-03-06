@@ -2,23 +2,28 @@
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import AppSettings from './lib/store/settingsstore';
 
 const Page = () => {
   const router = useRouter();
+  const { alreadyOpened, markOpened } = AppSettings()
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (alreadyOpened) {
       router.push('/onboardingone');
-    }, 5000); 
+    } else {
+      setTimeout(() => {
+        markOpened()
+        router.push('/onboardingone')
+      }, 3000)
+    }
 
-    return () => clearTimeout(timer);
-  }, [router]);
+  }, [alreadyOpened, router, markOpened]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-white">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-purple-500">Welcome to Hey Solana</h1>
-        <p className="text-lg text-gray-500 mt-4">Your most intuitive wallet is here</p>
+        <img src='/gif/heysol.gif' alt='gif' />
       </div>
     </div>
   );
