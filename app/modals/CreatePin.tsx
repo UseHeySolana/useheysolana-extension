@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import Button from "@/app/ui/Button";
+import Button from "@/app/components/ui/Button";
+import { useStore } from "@/store/useStore"; // Import the store
 
 interface CreatePinModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface CreatePinModalProps {
 export default function CreatePinModal({ isOpen, onClose, onNext }: CreatePinModalProps) {
   const [pin, setPin] = useState(["", "", "", ""]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const { setPin: setPinInStore } = useStore(); // Access the store's setPin method
 
   const handleChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -36,6 +38,8 @@ export default function CreatePinModal({ isOpen, onClose, onNext }: CreatePinMod
     if (pin.includes("")) {
       showAlert("Incomplete PIN!");
     } else {
+      const pinString = pin.join(""); // Combine the PIN array into a string
+      setPinInStore(pinString); // Store the PIN in the useStore
       onNext(); // Move to ConfirmPinModal
     }
   };
@@ -48,7 +52,7 @@ export default function CreatePinModal({ isOpen, onClose, onNext }: CreatePinMod
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 px-4">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/30 backdrop-blur-md px-4 z-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 relative">
         {alertMessage && (
           <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-md text-sm">
@@ -86,6 +90,4 @@ export default function CreatePinModal({ isOpen, onClose, onNext }: CreatePinMod
       </div>
     </div>
   );
-
-  
 }

@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Toggle from "@/app/ui/ToggleSwitch";
-import Button from "@/app/ui/Button";
+import Toggle from "@/app/components/ui/ToggleSwitch";
+import Button from '@/app/components/ui/Button';
+
 
 const OnboardingFour = () => {
   const router = useRouter();

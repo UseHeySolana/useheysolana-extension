@@ -1,10 +1,7 @@
-// import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 
-
-
-export default function DynamicPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function DynamicPage({ params }: { params: { slug: string } }) {
+  const { slug } = await params; // Await params
 
   // Define valid screens
   const screens: Record<string, ReturnType<typeof dynamic>> = {
@@ -15,6 +12,11 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
     voiceregistration: dynamic(() => import("../screens/VoiceRegistration")),
     voiceregistrationconfirm: dynamic(() => import("../screens/VoiceRegistrationConfirm")),
     seedphrase: dynamic(() => import("../screens/SeedPhrase")),
+    dashboard: dynamic(() => import("../screens/Dashboard")),
+    selecttoken:dynamic(() => import("../screens/SelectToken")),
+    sendtoken: dynamic(() => import("../screens/SendToken")),
+    amount: dynamic(() => import("../screens/Amount")),
+
   };
 
   // Load the correct component, or show NotFound

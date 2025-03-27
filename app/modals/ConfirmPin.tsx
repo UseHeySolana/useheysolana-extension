@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import Button from "@/app/ui/Button";
+import Button from "@/app/components/ui/Button";
+import { useStore } from "@/store/useStore"; // Import the store
 
 interface ConfirmPinModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ConfirmPinModalProps {
 export default function ConfirmPinModal({ isOpen, onClose }: ConfirmPinModalProps) {
   const [pin, setPin] = useState(["", "", "", ""]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const { pin: storedPin } = useStore(); // Access the stored PIN from the store
 
   const handleChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -35,8 +37,13 @@ export default function ConfirmPinModal({ isOpen, onClose }: ConfirmPinModalProp
     if (pin.includes("")) {
       showAlert("Incomplete PIN!");
     } else {
-      console.log("PIN Confirmed:", pin.join(""));
-      onClose();
+      const enteredPin = pin.join(""); // Combine the PIN array into a string
+      if (enteredPin === storedPin) {
+        showAlert("PIN Confirmed Successfully!");
+        onClose(); // Close the modal on success
+      } else {
+        showAlert("PIN does not match. Please try again!");
+      }
     }
   };
 
@@ -48,10 +55,16 @@ export default function ConfirmPinModal({ isOpen, onClose }: ConfirmPinModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 px-4">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/30 backdrop-blur-md px-4 z-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 relative">
         {alertMessage && (
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-md text-sm">
+          <div
+            className={`absolute top-2 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-md text-sm ${
+              alertMessage.includes("Successfully")
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
             {alertMessage}
           </div>
         )}

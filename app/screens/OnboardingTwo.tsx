@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Voice from '@/public/img/onboarding2.png';
 import TopSwitch from '@/app/components/TopSwitch';
-import Button from '@/app/ui/Button';
+import Button from '@/app/components/ui/Button';
+
 
 const OnboardingTwo = () => {
   const router = useRouter();

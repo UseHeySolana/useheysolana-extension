@@ -4,7 +4,8 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Quote from '@/public/img/quote.png';
-import Button from '@/app/ui/Button';
+import Button from '@/app/components/ui/Button';
+
 
 const VoiceRegistration = () => {
     const router = useRouter();

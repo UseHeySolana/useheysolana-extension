@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import Button from "@/app/ui/Button";
+import Button from "@/app/components/ui/Button";
 
 interface ConfirmSecretPhraseModalProps {
   isOpen: boolean;
@@ -36,7 +36,7 @@ export default function ConfirmSecretPhraseModal({ isOpen, onClose, onNext, secr
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 px-4"
+          className="fixed inset-0 flex justify-center items-center bg-black/30 backdrop-blur-md px-4 z-50"
           onClick={onClose}
         >
           <motion.div

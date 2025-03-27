@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import Button from "@/app/ui/Button";
+import Button from "@/app/components/ui/Button";
 
 interface UsernameModalProps {
   isOpen: boolean;
@@ -44,7 +44,7 @@ export default function UsernameModal({ isOpen, onClose, onNext }: UsernameModal
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 px-4">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/30 backdrop-blur-md px-4 z-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 relative">
         <h2 className="text-lg font-bold text-black">One last thing</h2>
         <p className="text-gray-500 text-sm mb-4">

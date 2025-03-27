@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
-import Button from "@/app/ui/Button";
+import Button from '@/app/components/ui/Button';
 import { useModal } from "@/app/context/ModalContext";
 
 export default function SeedPhrase() {
@@ -52,7 +52,7 @@ export default function SeedPhrase() {
         </button>
       </div>
 
-      <div className="fixed bottom-0 mb-12 left-0 right-0 flex flex-col items-center px-6 z-20">
+      <div className="fixed bottom-0 mb-12 left-0 right-0 flex flex-col items-center px-6">
         <Button text="Next" bgColor="#971BB2" onClick={() => openModal("confirmSecretPhrase", { secretPhrase })} />
       </div>
     </div>
