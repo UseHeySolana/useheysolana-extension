@@ -10,16 +10,20 @@ import {
 } from "@solana/web3.js";
 import fetch from "cross-fetch";
 import bs58 from "bs58";
+import Button from "@/app/components/ui/Button";
+import BackButton from "@/app/components/ui/BackButton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Define token type
 interface Token {
   symbol: string;
   name: string;
-  mint: string; // Token mint address
-  logo: string; // URL to logo
+  mint: string;
+  logo: string;
   balance: number;
-  usdValue: number; // USD value per token (mocked for now)
-  decimals: number; // Number of decimals for the token
+  usdValue: number;
+  decimals: number;
 }
 
 // Mock wallet with provided keys
@@ -66,7 +70,6 @@ export default function SwapTokens() {
           logo: token.logoURI || "/placeholder.png",
           balance: 0,
           usdValue: 1,
-
           decimals: token.decimals,
         }));
 
@@ -86,8 +89,7 @@ export default function SwapTokens() {
         setFromToken(solToken || mappedTokens[0]);
         setToToken(usdcToken || mappedTokens[1]);
       } catch (error) {
-        console.error("Error fetching token list:", error);
-        alert("Failed to fetch token list. Please try again later.");
+        toast.error("Failed to fetch token list. Please try again later.");
       }
     };
 
@@ -121,7 +123,7 @@ export default function SwapTokens() {
           parseInt(quoteResponse.outAmount) / Math.pow(10, toToken.decimals);
         setToAmount(outAmount);
       } catch (error) {
-        console.error("Error fetching quote:", error);
+        toast.error("Failed to fetch quote. Please try again.");
         setToAmount(0);
       } finally {
         setLoading(false);
@@ -141,6 +143,7 @@ export default function SwapTokens() {
   const handleMax = () => {
     const balance = fromToken?.balance || 0;
     setFromAmount(balance);
+    toast.info("Max amount set.");
   };
 
   // Swap tokens (switch from and to)
@@ -150,13 +153,14 @@ export default function SwapTokens() {
       setToToken(fromToken);
       setFromAmount(toAmount);
       setToAmount(fromAmount);
+      toast.success("Tokens swapped successfully.");
     }
   };
 
   // Perform the swap using Jupiter API
   const handleSwap = async () => {
     if (!fromToken || !toToken || fromAmount <= 0) {
-      alert("Please enter a valid amount to swap.");
+      toast.error("Please enter a valid amount to swap.");
       return;
     }
 
@@ -216,58 +220,46 @@ export default function SwapTokens() {
         signature: txid,
       });
 
-      alert(`Swap successful! Transaction: https://solscan.io/tx/${txid}`);
+      toast.success(
+        `Swap successful! Transaction: https://solscan.io/tx/${txid}`
+      );
     } catch (error) {
-      console.error("Error performing swap:", error);
-      alert("Swap failed. Check the console for details.");
+      toast.error("Swap failed. Check the console for details.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
+    <div className="min-h-screen bg-gray-100 px-2 py-4 flex flex-col items-center">
+      <ToastContainer position="bottom-right" autoClose={5000} />
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 w-full max-w-md">
-        <button className="p-2 rounded-full bg-white shadow-md">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-        <h1 className="text-lg font-semibold text-black">Swap Tokens</h1>
+        <BackButton />
+        <h1 className="text-lg text-black">Swap Tokens</h1>
       </div>
 
       {/* Swap Card */}
-      <div className="rounded-xl p-4 w-full max-w-md">
+      <div className="rounded-xl p-2 w-full max-w-md">
         {/* From Token */}
-        <div className="bg-white shadow-sm rounded-[20px] p-4 mb-4">
-          <div className="flex justify-between items-center">
+        <div className="bg-white shadow-sm rounded-[20px] mb-4">
+          <div className="flex justify-between items-center p-4">
             <div>
               <input
                 type="number"
                 value={fromAmount}
                 onChange={(e) => handleFromAmountChange(e.target.value)}
-                className="text-[50px] text-black font-bold bg-transparent outline-none w-32"
-                placeholder="0.000"
+                className="text-4xl font-semibold text-black bg-transparent outline-none w-32 no-spinner"
+                placeholder="0.00"
               />
-              <p className="text-sm text-gray-500">
+              <p className="text-xl text-gray-500">
                 $
                 {fromToken
                   ? (fromAmount * fromToken.usdValue).toFixed(2)
                   : "0.00"}
               </p>
             </div>
+
             <div className="flex items-center bg-gray-200 p-2 rounded-full">
               {fromToken && (
                 <>
@@ -296,13 +288,19 @@ export default function SwapTokens() {
               )}
             </div>
           </div>
-          <div className="flex justify-between mt-2">
-            <p className="text-sm text-gray-500">
-              Available balance: {fromToken?.balance || 0} {fromToken?.symbol}
-            </p>
+
+          <div className="bg-gray-200 h-1 mt-6"></div>
+
+          <div className="flex justify-between mt-2 p-4">
+            <div>
+              <p className="text-sm text-black">
+                {fromToken?.balance || 0} {fromToken?.symbol}
+              </p>
+              <p className="text-sm text-black">Available balance</p>
+            </div>
             <button
               onClick={handleMax}
-              className="px-3 py-1 bg-gray-200 rounded-full text-sm font-semibold"
+              className="px-3 py-1 bg-gray-200 rounded-full text-sm font-semibold text-black"
             >
               max
             </button>
@@ -311,30 +309,32 @@ export default function SwapTokens() {
 
         {/* Swap Icon */}
         <div className="flex justify-center -my-2">
-          <button
+          <div
             onClick={handleSwapTokens}
             className="p-2 bg-gray-200 rounded-full"
           >
             <ArrowsUpDownIcon className="w-6 h-6 text-gray-600" />
-          </button>
+          </div>
         </div>
 
         {/* To Token */}
-        <div className="bg-gray-100 rounded-xl p-4 mt-4">
+        <div className="bg-white rounded-[20px] shadow-md px-4 py-8 mt-4">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-2xl font-bold">{toAmount.toFixed(4)}</p>
+              <p className="text-2xl text-black font-bold">
+                {toAmount.toFixed(4)}
+              </p>
               <p className="text-sm text-gray-500">
                 ${toToken ? (toAmount * toToken.usdValue).toFixed(2) : "0.00"}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex bg-gray-200 items-center p-2 rounded-full">
               {toToken && (
                 <>
                   <img
                     src={toToken.logo}
                     alt={toToken.name}
-                    className="w-8 h-8 rounded-full"
+                    className="w-[25px] h-[25px] rounded-full"
                   />
                   <select
                     value={toToken.mint}
@@ -344,7 +344,7 @@ export default function SwapTokens() {
                       );
                       if (selectedToken) setToToken(selectedToken);
                     }}
-                    className="bg-transparent font-semibold"
+                    className="bg-transparent text-black font-xl w-[100px] text-center focus:outline-none"
                   >
                     {tokens.map((token) => (
                       <option key={token.mint} value={token.mint}>
@@ -359,22 +359,20 @@ export default function SwapTokens() {
         </div>
 
         {/* Network Fee */}
-        <div className="flex justify-between mt-4">
-          <p className="text-sm text-gray-500">Network fee</p>
-          <p className="text-sm font-semibold">{networkFee} SOL</p>
+        <div className="flex justify-between mt-4 bg-white px-4 py-6 rounded-[20px] shadow-md">
+          <p className="text-sm text-black">Network fee</p>
+          <p className="text-sm text-black font-semibold">{networkFee} SOL</p>
         </div>
       </div>
 
       {/* Swap Button */}
-      <button
-        onClick={handleSwap}
-        disabled={loading}
-        className={`mt-6 w-full max-w-md py-3 bg-purple-600 text-white rounded-full font-semibold ${
-          loading ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-      >
-        {loading ? "Swapping..." : "Swap"}
-      </button>
+      <div className="flex absolute bottom-0 justify-center w-full max-w-md mb-5">
+        <Button
+          text={loading ? "Swapping..." : "Swap"}
+          onClick={handleSwap}
+          disabled={loading}
+        />
+      </div>
     </div>
   );
 }

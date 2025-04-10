@@ -19,6 +19,9 @@ export default async function DynamicPage({ params }: { params: { slug: string }
     recieve: dynamic(() => import("../screens/Recieve")),
     qrcode: dynamic(() => import("../screens/QrCode")),
     swap: dynamic(() => import("../screens/Swap")),
+    navbar: dynamic(() => import("../screens/NavBar")),
+    settings: dynamic(() => import("../screens/Settings")),
+    
 
     transactionsuccessful: dynamic(() => import("../screens/TransactionSuccessful")),
 
