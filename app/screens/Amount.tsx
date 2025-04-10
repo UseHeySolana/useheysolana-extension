@@ -20,7 +20,7 @@ const formatAddress = (address: string) => {
 };
 
 export default function Amount() {
-  const { address, balance, image, setAmountInStore } = useStore(); // Access the store's update method
+  const { address, balance, image, setAmountInStore } = useStore();
   const [amount, setAmount] = useState("");
   const [usdValue, setUsdValue] = useState(0);
   const [inputMode, setInputMode] = useState<"SOL" | "USD">("SOL");
@@ -65,8 +65,8 @@ export default function Amount() {
   };
 
   const handleConfirmClick = () => {
-    setAmountInStore(amount); // Store the entered amount in the store
-    setIsModalOpen(true); // Open the modal
+    setAmountInStore(amount);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
